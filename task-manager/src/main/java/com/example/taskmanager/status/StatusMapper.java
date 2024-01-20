@@ -17,11 +17,12 @@ public class StatusMapper {
     }
 
     public Status toModel(StatusDTO dto) {
-        return new Status(dto.getKey(), dto.getName());
+        Optional<Status> entity = statusRepository.findByKey(dto.getKey());
+        return entity.orElseGet(() -> new Status(dto.getKey(), dto.getName()));
     }
 
     public Status toModel(UUID key) {
-        Optional<Status> entity = statusRepository.findByUuid(key);
+        Optional<Status> entity = statusRepository.findByKey(key);
         return entity.isPresent() ? entity.get() : null;
     }
 }

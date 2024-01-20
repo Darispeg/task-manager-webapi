@@ -29,14 +29,13 @@ public class CategoryServiceBean implements CategoryService {
     @Override
     public CategoryDTO create(CategoryDTO dto) {
         Category entity = _mapper.toModel(dto);
-        entity.setKey(UUID.randomUUID()); // TODO: Delete line
         entity = categoryRepository.save(entity);
         return _mapper.toDTO(entity);
     }
 
     @Override
     public CategoryDTO update(CategoryDTO dto) {
-        Optional<Category> exist = categoryRepository.findByUuid(dto.getKey());
+        Optional<Category> exist = categoryRepository.findByKey(dto.getKey());
 
         if(exist.isPresent()) {
             Category entity = exist.get();
@@ -51,13 +50,13 @@ public class CategoryServiceBean implements CategoryService {
 
     @Override
     public CategoryDTO getByKey(UUID key) {
-        Optional<Category> entity = categoryRepository.findByUuid(key);
+        Optional<Category> entity = categoryRepository.findByKey(key);
         return entity.isPresent() ? _mapper.toDTO(entity.get()) : null;
     }
 
     @Override
     public boolean delete(UUID key) {
-        Optional<Category> entity = categoryRepository.findByUuid(key);
+        Optional<Category> entity = categoryRepository.findByKey(key);
 
         if(entity.isPresent()) {
             categoryRepository.delete(entity.get());

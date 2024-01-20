@@ -29,14 +29,13 @@ public class TaskServiceBean implements TaskService {
     @Override
     public TaskDTO create(TaskDTO task) {
         Task entity = _mapper.toModel(task);
-        entity.setKey(UUID.randomUUID()); // TODO: Delete line
         entity = taskRepository.save(entity);
         return _mapper.toDTO(entity);
     }
 
     @Override
     public TaskDTO update(TaskDTO dto) {
-        Optional<Task> exist = taskRepository.findByUuid(dto.getKey());
+        Optional<Task> exist = taskRepository.findByKey(dto.getKey());
 
         if (exist.isPresent())
         {
@@ -55,13 +54,13 @@ public class TaskServiceBean implements TaskService {
 
     @Override
     public TaskDTO getByKey(UUID key) {
-        Optional<Task> entity = taskRepository.findByUuid(key);
+        Optional<Task> entity = taskRepository.findByKey(key);
         return entity.isPresent() ? _mapper.toDTO(entity.get()) : null;
     }
 
     @Override
     public boolean delete(UUID key) {
-        Optional<Task> entity = taskRepository.findByUuid(key);
+        Optional<Task> entity = taskRepository.findByKey(key);
 
         if (entity.isPresent())
         {

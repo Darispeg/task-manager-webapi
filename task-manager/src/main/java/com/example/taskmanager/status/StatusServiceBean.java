@@ -29,14 +29,13 @@ public class StatusServiceBean implements StatusService {
     @Override
     public StatusDTO create(StatusDTO dto) {
         Status entity = _mapper.toModel(dto);
-        entity.setKey(UUID.randomUUID()); // TODO: Delete line
         entity = statusRepository.save(entity);
         return _mapper.toDTO(entity);
     }
 
     @Override
     public StatusDTO update(StatusDTO dto) {
-        Optional<Status> exist = statusRepository.findByUuid(dto.getKey());
+        Optional<Status> exist = statusRepository.findByKey(dto.getKey());
 
         if(exist.isPresent()) {
             Status entity = exist.get();
@@ -50,13 +49,13 @@ public class StatusServiceBean implements StatusService {
 
     @Override
     public StatusDTO getByKey(UUID key) {
-        Optional<Status> entity = statusRepository.findByUuid(key);
+        Optional<Status> entity = statusRepository.findByKey(key);
         return entity.isPresent() ? _mapper.toDTO(entity.get()) : null;
     }
 
     @Override
     public boolean delete(UUID key) {
-        Optional<Status> entity = statusRepository.findByUuid(key);
+        Optional<Status> entity = statusRepository.findByKey(key);
 
         if(entity.isPresent()) {
             statusRepository.delete(entity.get());

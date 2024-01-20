@@ -1,5 +1,6 @@
 package com.example.taskmanager.tasks;
 
+import com.example.taskmanager.tasks.models.TaskRequest;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -9,10 +10,14 @@ import java.util.List;
 import java.util.UUID;
 
 @RestController
+@CrossOrigin("*")
 @RequestMapping("/api/tasks")
 public class TaskController {
     @Autowired
     private TaskService taskService;
+
+    @Autowired
+    private TaskMapper _mapperTask;
 
     @GetMapping
     public ResponseEntity<List<TaskDTO>> getAll() {
@@ -43,9 +48,10 @@ public class TaskController {
     }
 
     @PostMapping
-    public ResponseEntity<TaskDTO> save(@RequestBody TaskDTO request) {
+    public ResponseEntity<TaskDTO> save(@RequestBody TaskRequest request) {
         try {
-            TaskDTO taskDTO = taskService.create(request);
+            TaskDTO taskDTO = _mapperTask.toDTO(request);
+            taskDTO = taskService.create(taskDTO);
             return ResponseEntity
                     .status(HttpStatus.OK)
                         .body(taskDTO);

@@ -17,11 +17,13 @@ public class CategoryMapper {
     }
 
     public Category toModel(CategoryDTO dto) {
-        return new Category(dto.getKey(), dto.getName(), dto.getDescription());
+        Optional<Category> entity = categoryRepository.findByKey(dto.getKey());
+        return entity.orElseGet(() -> new Category(dto.getKey(), dto.getName(), dto.getDescription()));
+
     }
 
     public Category toModel(UUID key) {
-        Optional<Category> entity = categoryRepository.findByUuid(key);
+        Optional<Category> entity = categoryRepository.findByKey(key);
         return entity.isPresent() ? entity.get() : null;
     }
 }
