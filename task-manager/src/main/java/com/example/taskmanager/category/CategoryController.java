@@ -9,7 +9,7 @@ import java.util.List;
 import java.util.UUID;
 
 @RestController
-@CrossOrigin("*")
+@CrossOrigin(value = "*")
 @RequestMapping("/api/categories")
 public class CategoryController {
     @Autowired
