@@ -3,6 +3,7 @@ package com.example.taskmanager.status;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -44,7 +45,7 @@ public class StatusController {
     }
 
     @PostMapping
-    public ResponseEntity<StatusDTO> save(@RequestBody StatusDTO request) {
+    public ResponseEntity<StatusDTO> save(@Validated @RequestBody StatusDTO request) {
         try {
             StatusDTO statusDTO = statusService.create(request);
             return ResponseEntity

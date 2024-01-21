@@ -1,5 +1,6 @@
 package com.example.taskmanager.status;
 
+import com.example.taskmanager.utils.exceptions.StatusNotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
@@ -23,6 +24,10 @@ public class StatusMapper {
 
     public Status toModel(UUID key) {
         Optional<Status> entity = statusRepository.findByKey(key);
-        return entity.isPresent() ? entity.get() : null;
+
+        if (entity.isEmpty())
+            throw new StatusNotFoundException(key);
+
+        return entity.orElse(null);
     }
 }

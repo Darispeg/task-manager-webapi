@@ -1,5 +1,6 @@
 package com.example.taskmanager.category;
 
+import com.example.taskmanager.utils.exceptions.CategoryNotFountException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
@@ -37,32 +38,34 @@ public class CategoryServiceBean implements CategoryService {
     public CategoryDTO update(CategoryDTO dto) {
         Optional<Category> exist = categoryRepository.findByKey(dto.getKey());
 
-        if(exist.isPresent()) {
-            Category entity = exist.get();
-            entity.setName(dto.getName());
-            entity.setDescription(dto.getDescription());
-            categoryRepository.save(entity);
-            return _mapper.toDTO(entity);
-        }
+        if (exist.isEmpty())
+            throw new CategoryNotFountException(dto.getKey());
 
-        return null;
+        Category entity = exist.get();
+        entity.setName(dto.getName());
+        entity.setDescription(dto.getDescription());
+        categoryRepository.save(entity);
+        return _mapper.toDTO(entity);
     }
 
     @Override
     public CategoryDTO getByKey(UUID key) {
         Optional<Category> entity = categoryRepository.findByKey(key);
-        return entity.isPresent() ? _mapper.toDTO(entity.get()) : null;
+
+        if (entity.isEmpty())
+            throw new CategoryNotFountException(key);
+
+        return _mapper.toDTO(entity.get());
     }
 
     @Override
     public boolean delete(UUID key) {
         Optional<Category> entity = categoryRepository.findByKey(key);
 
-        if(entity.isPresent()) {
-            categoryRepository.delete(entity.get());
-            return true;
-        }
+        if (entity.isEmpty())
+            throw new CategoryNotFountException(key);
 
-        return false;
+        categoryRepository.delete(entity.get());
+        return true;
     }
 }

@@ -1,5 +1,6 @@
 package com.example.taskmanager.tasks;
 
+import com.example.taskmanager.utils.exceptions.TaskNotFountException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
@@ -37,37 +38,35 @@ public class TaskServiceBean implements TaskService {
     public TaskDTO update(TaskDTO dto) {
         Optional<Task> exist = taskRepository.findByKey(dto.getKey());
 
-        if (exist.isPresent())
-        {
-            Task entity = exist.get();
-            entity.setDescription(dto.getDescription());
-            entity.setName(dto.getName());
-            entity.setEndDate(dto.getEndDate());
+        if (exist.isEmpty())
+            throw new TaskNotFountException(dto.getKey());
 
-            taskRepository.save(entity);
-
-            return _mapper.toDTO(entity);
-        }
-
-        return null;
+        Task entity = exist.get();
+        entity.setDescription(dto.getDescription());
+        entity.setName(dto.getName());
+        entity.setEndDate(dto.getEndDate());
+        taskRepository.save(entity);
+        return _mapper.toDTO(entity);
     }
 
     @Override
     public TaskDTO getByKey(UUID key) {
         Optional<Task> entity = taskRepository.findByKey(key);
-        return entity.isPresent() ? _mapper.toDTO(entity.get()) : null;
+
+        if (entity.isEmpty())
+            throw new TaskNotFountException(key);
+
+        return _mapper.toDTO(entity.get());
     }
 
     @Override
     public boolean delete(UUID key) {
         Optional<Task> entity = taskRepository.findByKey(key);
 
-        if (entity.isPresent())
-        {
-            taskRepository.delete(entity.get());
-            return true;
-        }
+        if (entity.isEmpty())
+            throw new TaskNotFountException(key);
 
-        return false;
+        taskRepository.delete(entity.get());
+        return true;
     }
 }

@@ -1,9 +1,12 @@
 package com.example.taskmanager.tasks;
 
 import com.example.taskmanager.tasks.models.TaskRequest;
+import com.example.taskmanager.utils.exceptions.EntityNotFoundException;
+import com.example.taskmanager.utils.exceptions.TaskNotFountException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -33,22 +36,13 @@ public class TaskController {
     }
 
     @GetMapping( value = "/{key}")
-    public ResponseEntity<TaskDTO> getByTask(@PathVariable UUID key) {
-        try {
-            TaskDTO task = taskService.getByKey(key);
-            if (task != null)
-                return ResponseEntity.status(HttpStatus.OK).body(task);
-            else
-                return ResponseEntity.status(HttpStatus.NOT_FOUND).body(null);
-        } catch (Exception exception) {
-            return ResponseEntity
-                    .status(HttpStatus.INTERNAL_SERVER_ERROR)
-                        .body(null);
-        }
+    public ResponseEntity<?> getByTask(@PathVariable UUID key) {
+        TaskDTO task = taskService.getByKey(key);
+        return ResponseEntity.status(HttpStatus.OK).body(task);
     }
 
     @PostMapping
-    public ResponseEntity<TaskDTO> save(@RequestBody TaskRequest request) {
+    public ResponseEntity<?> save(@Validated @RequestBody TaskRequest request) {
         try {
             TaskDTO taskDTO = _mapperTask.toDTO(request);
             taskDTO = taskService.create(taskDTO);

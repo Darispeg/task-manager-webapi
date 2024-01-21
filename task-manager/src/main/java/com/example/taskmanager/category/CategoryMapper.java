@@ -1,5 +1,6 @@
 package com.example.taskmanager.category;
 
+import com.example.taskmanager.utils.exceptions.CategoryNotFountException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
@@ -24,6 +25,10 @@ public class CategoryMapper {
 
     public Category toModel(UUID key) {
         Optional<Category> entity = categoryRepository.findByKey(key);
-        return entity.isPresent() ? entity.get() : null;
+
+        if (entity.isEmpty())
+            throw new CategoryNotFountException(key);
+
+        return entity.orElse(null);
     }
 }
